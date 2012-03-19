@@ -1,0 +1,104 @@
+# -*- encoding: utf-8 -*-
+
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+import time
+
+from osv import fields, osv
+from tools.translate import _
+import decimal_precision as dp
+import netsvc
+
+class FiscalDocRighe(osv.osv):
+   _inherit = "fiscaldoc.righe"
+
+
+
+   
+   _columns = {
+                'extra_price_variant':fields.float('Prezzo Extra', digits_compute= dp.get_precision('Sale Price')),
+               }
+   
+   
+
+   def totale_riga(self,qty, netto,extra_price_variant=False):
+       #import pdb;pdb.set_trace()
+       if qty and netto:
+        if extra_price_variant:
+           netto = netto+extra_price_variant
+       else:
+	  qty=netto = 0.0
+
+       return qty * netto
+   
+   def onchange_articolo(self, cr, uid, ids, product_id, listino_id, qty, partner_id, data_doc, uom):
+      res =super(FiscalDocRighe,self).onchange_articolo(cr, uid, ids, product_id, listino_id, qty, partner_id, data_doc, uom)
+      import pdb;pdb.set_trace()
+      if res:
+       v=res.get('value',{})
+       if product_id:            
+            product_obj = self.pool.get('product.product')
+            riga_art = product_obj.browse(cr, uid, product_id)   
+            if riga_art:
+                v['extra_price_variant'] = riga_art.price_extra
+                v['totale_riga'] = self.totale_riga(qty, v['prezzo_netto'],v['extra_price_variant'])
+       else:
+           v={} 
+                
+      return {'value':v}       
+
+   def on_change_qty(self, cr, uid, ids, product_id, listino_id, qty, partner_id, uom, data_doc,extra_price_variant=False):
+        res =super(FiscalDocRighe,self).on_change_qty(cr, uid, ids, product_id, listino_id, qty, partner_id, uom, data_doc)
+        #import pdb;pdb.set_trace()
+        if res:            
+            v = res.get('value',{})  
+            if v.get('prezzo_netto',False):
+	      v['totale_riga'] = self.totale_riga(qty, v['prezzo_netto'],extra_price_variant) 
+        else:
+           v={} 
+            
+        return {'value':v}            
+
+   def on_change_prezzo(self, cr, uid, ids, prezzo, sconto, qty,extra_price_variant=False):
+     
+       res =super(FiscalDocRighe,self).on_change_prezzo(cr, uid, ids, prezzo, sconto, qty)
+       #import pdb;pdb.set_trace()
+       if res:
+        v = res.get('value',{})
+        if v.get('prezzo_netto',False):
+            v['totale_riga'] = self.totale_riga(qty, v['prezzo_netto'],extra_price_variant)  
+       else:
+           v={} 
+             
+       return {'value':v}   
+   
+   def on_change_strSconti(self, cr, uid, ids, value, prezzo, qty,extra_price_variant=False):
+       #import pdb;pdb.set_trace()
+      res =super(FiscalDocRighe,self).on_change_strSconti( cr, uid, ids, value, prezzo, qty)
+      #import pdb;pdb.set_trace()
+      if res:        
+        v = res.get('value',{})  
+        if v.get('prezzo_netto',False):
+            v['totale_riga'] = self.totale_riga(qty, v['prezzo_netto'],extra_price_variant)
+        else:
+            sconto = 0
+      else:
+           v={} 
+            
+
+      return  {'value': v}
+    
+   def onchange_flag(self, cr, uid, ids, product_id, listino_id, qty, partner_id, data_doc, uom, flag_omaggi,extra_price_variant=False):    
+       #import pdb;pdb.set_trace()
+       res =super(FiscalDocRighe,self).onchange_flag( cr, uid, ids, product_id, listino_id, qty, partner_id, data_doc, uom, flag_omaggi)
+       #import pdb;pdb.set_trace()
+       if res:
+        v = res.get('value',{})  
+        if  v['totale_riga']<>0:
+            v['totale_riga'] = self.totale_riga(qty, v['prezzo_netto'],extra_price_variant)
+       else:
+           v={} 
+            
+       return  {'value': v}                 
+
+FiscalDocRighe()

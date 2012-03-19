@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+    
+
+        <record model="ir.ui.view" id="view_fiscaldoc_form_extra">
+            <field name="name">view.fiscaldoc.form.extra</field>
+            <field name="model">fiscaldoc.header</field>
+            <field name="inherit_id" ref="ItalianFiscalDocument.view_fiscaldoc_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/notebook/page/field[@name='righe_articoli']" position="replace" >
+                           <field colspan="4" mode="tree,form" name="righe_articoli" nolabel="1" widget="one2many_list">
+                                <form string="Righe Dcumento">
+                                    <notebook>
+                                        <page string="Dettaglio Righe">
+                                            <field  name="product_id" 
+                                                colspan="4"
+<<<<<<< HEAD
+                                                on_change = "onchange_articolo(product_id,parent.listino_id,product_uom_qty,parent.partner_id,parent.data_documento,product_uom,context)"
+=======
+                                                on_change = "onchange_articolo(product_id,parent.listino_id,product_uom_qty,parent.partner_id,parent.data_documento,product_uom)"
+>>>>>>> 9c0b1c1f2bc7436937a85f075c2fd6c3b3d3defd
+                                            context="{'location':parent.magazzino_id}"                         
+                                            />
+                                            <field name="descrizione_riga" colspan="4" />
+                                            <newline/>
+<<<<<<< HEAD
+                                            <field name="product_uom_qty"  on_change="on_change_qty(product_id,parent.listino_id,product_uom_qty,parent.partner_id,product_uom,parent.data_documento,context,extra_price_variant)" />
+=======
+                                            <field name="product_uom_qty"  on_change="on_change_qty(product_id,parent.listino_id,product_uom_qty,parent.partner_id,product_uom,parent.data_documento,extra_price_variant)" />
+>>>>>>> 9c0b1c1f2bc7436937a85f075c2fd6c3b3d3defd
+                                            <!--  context="partner_id=parent.partner_id,quantity=product_uom_qty,pricelist=parent.pricelist_id,shop=parent.shop_id,uom=product_uom" -->
+                                            <field name="product_uom"/>
+                                            <newline/>
+                                            <field name="product_prezzo_unitario" on_change="on_change_prezzo(product_prezzo_unitario,discount_riga,product_uom_qty,extra_price_variant)"/>
+                                            <field name="sconti_riga" on_change="on_change_strSconti(sconti_riga,product_prezzo_unitario,product_uom_qty,extra_price_variant)"/>
+                                            <field name="discount_riga" on_change="on_change_prezzo(product_prezzo_unitario,discount_riga,product_uom_qty,extra_price_variant)" />
+                                            <field name="prezzo_netto"  />
+                                			<field name="extra_price_variant" />                                            
+                                            <field name="totale_riga"   />
+                                            <field name="flag_omaggi" 
+                                            	on_change="onchange_flag(product_id,parent.listino_id,product_uom_qty,parent.partner_id,parent.data_documento, product_uom, flag_omaggi,extra_price_variant)"/>
+                                            <field name="perc_provv" />                                            
+                                            <field name="contropartita" />
+                                            <field name="codice_iva" />                                             
+                                            <newline/>
+                                        </page>
+                                        <page string="Altri Dati">
+                                            <field name="move_ids" />
+                                            <newline></newline>
+                                            <field name="order_line_id" />                                                                                         
+                                        </page>
+                                    </notebook>
+                                </form>
+                                <tree string="Righe Documento">
+<<<<<<< HEAD
+                                    <field colspan="1" name="product_id" context="{'location':parent.magazzino_id}"  on_change = "onchange_articolo(product_id,parent.listino_id,product_uom_qty,parent.partner_id,parent.data_documento,product_uom,context)"/>
+                                    <field colspan="1" name="descrizione_riga"/>                                  
+                                    <field name="product_uom_qty" string="Quantità" on_change="on_change_qty(product_id,parent.listino_id,product_uom_qty,parent.partner_id,product_uom,parent.data_documento,context,extra_price_variant)"/>
+=======
+                                    <field colspan="1" name="product_id" context="{'location':parent.magazzino_id}"  on_change = "onchange_articolo(product_id,parent.listino_id,product_uom_qty,parent.partner_id,parent.data_documento,product_uom)"/>
+                                    <field colspan="1" name="descrizione_riga"/>                                  
+                                    <field name="product_uom_qty" string="Quantità" on_change="on_change_qty(product_id,parent.listino_id,product_uom_qty,parent.partner_id,product_uom,parent.data_documento,extra_price_variant)"/>
+>>>>>>> 9c0b1c1f2bc7436937a85f075c2fd6c3b3d3defd
+                                    <field name="product_uom" string="UoM"/>
+                                    <field name="product_prezzo_unitario" on_change="on_change_prezzo(product_prezzo_unitario,discount_riga,product_uom_qty,extra_price_variant)" />
+                                    <field name="discount_riga" on_change="on_change_prezzo(product_prezzo_unitario,discount_riga,product_uom_qty,extra_price_variant)" />                                  
+                                    <field name="prezzo_netto" />
+                                	<field name="extra_price_variant" />                                    
+                                    <field name="totale_riga" />
+                                </tree>
+                            </field>
+                                                
+
+                
+                </xpath>
+
+            </field>
+        </record>      
+        
+
+        
+        
+ <!--
+        <record model="ir.ui.view" id="view_fiscaldoc_tree_extra">
+            <field name="name">view.fiscaldoc.tree.extra</field>
+            <field name="model">fiscaldoc.header</field>
+            <field name="inherit_id" ref="ItalianFiscalDocument.view_fiscaldoc_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="/form/notebook/page/field[@name='righe_articoli']/tree/field[@name='prezzo_netto']" position="after">
+                        <field name="extra_price_variant" />
+                    </xpath>        
+                </data>
+            </field>
+        </record>      
+        -->
+ 
+        
+    </data>
+</openerp>
